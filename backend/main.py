@@ -8,9 +8,15 @@ from database import engine, Base
 from models.auth import User
 import os
 
-Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Supplier Management and Price Prediction System", version="1.0.0")
+
+@app.on_event("startup")
+def startup_event():
+    # 在应用启动时，从环境变量读取 DATABASE_URL 并创建表
+    from database import engine, Base
+    Base.metadata.create_all(bind=engine)
+    print("Database tables created or verified successfully.")
 
 app.add_middleware(
     CORSMiddleware,
