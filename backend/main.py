@@ -13,11 +13,10 @@ port = int(os.getenv("PORT", "8000"))
 app = FastAPI(title="Supplier Management and Price Prediction System", version="1.0.0")
 
 @app.on_event("startup")
-async def startup_event():
+def startup_event():
     try:
         from database import engine, Base
-        async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all)
+        Base.metadata.create_all(bind=engine)
         print("Database tables created or verified successfully.")
     except Exception as e:
         print(f"Error creating database tables: {e}")
