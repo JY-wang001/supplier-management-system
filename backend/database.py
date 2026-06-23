@@ -3,17 +3,19 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Railway provides DATABASE_URL environment variable
 database_url = os.getenv("DATABASE_URL")
 
 if database_url:
-    # Use PostgreSQL on Railway
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_DATABASE_URL = database_url
-    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        connect_args={"connect_timeout": 5}
+    )
 else:
-    # Fallback to SQLite for local development
     SQLALCHEMY_DATABASE_URL = "sqlite:///./supplier.db"
     engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 

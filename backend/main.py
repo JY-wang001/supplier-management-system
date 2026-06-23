@@ -14,9 +14,12 @@ app = FastAPI(title="Supplier Management and Price Prediction System", version="
 
 @app.on_event("startup")
 def startup_event():
-    from database import engine, Base
-    Base.metadata.create_all(bind=engine)
-    print("Database tables created or verified successfully.")
+    try:
+        from database import engine, Base
+        Base.metadata.create_all(bind=engine)
+        print("Database tables created or verified successfully.")
+    except Exception as e:
+        print(f"Error creating database tables: {e}")
 
 app.add_middleware(
     CORSMiddleware,
